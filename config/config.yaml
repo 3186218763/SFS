@@ -6,12 +6,10 @@ defaults:
 
 data:
   csv_file: "./data/更张.csv"
-  seq_len: 100
-  pred_len: 1
-  label_len: 50
   batch_size: 16
   train_split: 0.99
   shuffle: True
+  num_workers: 8
 
 train:
   load_dir: "./outputs/2024-07-22/18-44-10/best_model.pth"

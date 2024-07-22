@@ -1,6 +1,5 @@
 import logging
 import os
-import shutil
 
 import torch.nn as nn
 from omegaconf import DictConfig
