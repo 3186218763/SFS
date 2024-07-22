@@ -37,7 +37,8 @@ def main(cfg: DictConfig):
     val_dataset = Subset(dataset, val_indices)
 
     # 创建数据加载器
-    train_loader = DataLoader(train_dataset, batch_size=cfg.data.batch_size, shuffle=cfg.data.shuffle, num_workers=cfg.data.num_workers)
+    train_loader = DataLoader(train_dataset, batch_size=cfg.data.batch_size, shuffle=cfg.data.shuffle,
+                              num_workers=cfg.data.num_workers)
     val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
 
     # 生成加载模型
@@ -48,7 +49,7 @@ def main(cfg: DictConfig):
         logger.info("模型参数加载成功")
 
     # 训练部分
-    if Train:
+    if cfg.train.is_train:
         # 设置训练器，loss_fn，迭代器
         optimizer = AdamW(model.parameters(), lr=cfg.train.learning_rate)
         loss_fn = nn.SmoothL1Loss()
@@ -108,7 +109,6 @@ def main(cfg: DictConfig):
     # 验证部分
     logger.info("开始验证...")
     model.eval()
-    val_losses = []
     all_true_values = []
     all_predicted_values = []
 
@@ -133,10 +133,6 @@ def main(cfg: DictConfig):
             all_true_values.append(y.flatten())
             all_predicted_values.append(outputs.flatten())
 
-            # 只保留前5个批次的数据
-            if batch_idx >= 5:  # 0到4共5个批次
-                break
-
     # 将所有批次的数据转换为一维数组
     all_true_values = np.concatenate(all_true_values)
     all_predicted_values = np.concatenate(all_predicted_values)
@@ -155,5 +151,5 @@ def main(cfg: DictConfig):
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    Train = False
+
     main()

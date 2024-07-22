@@ -8,6 +8,9 @@ class TokenEmbedding(nn.Module):
         padding = 1
         self.tokenConv = nn.Conv1d(in_channels=c_in, out_channels=d_model,
                                    kernel_size=3, padding=padding, padding_mode='circular', bias=False)
+        for m in self.modules():
+            if isinstance(m, nn.Conv1d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='leaky_relu')
 
     def forward(self, x):
         x = self.tokenConv(x.permute(0, 2, 1)).transpose(1, 2)
@@ -44,13 +47,9 @@ class DataEmbedding_wo_pos(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, x, x_mark):
-
         x = self.value_embedding(x)
         x_mark = self.temporal_embedding(x_mark)
 
         out = self.dropout(x + x_mark)
 
         return out
-
-
-
