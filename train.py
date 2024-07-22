@@ -84,7 +84,7 @@ def main(cfg: DictConfig):
             avg_loss = total_loss / len(train_loader)
             train_losses.append(avg_loss)
             current_lr = optimizer.param_groups[0]['lr']
-            logger.info(f"Epoch {epoch + 1}/{cfg.train.epochs}, Loss: {avg_loss:.4f}, LR: {current_lr:.4f}")
+            logger.info(f"Epoch {epoch + 1}/{cfg.train.epochs}, Loss: {avg_loss:.4f}, LR: {current_lr:.8f}")
 
             # 保存损失更小的模型参数
             if avg_loss < best_loss:
