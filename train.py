@@ -38,7 +38,7 @@ def main(cfg: DictConfig):
 
     # 创建数据加载器
     train_loader = DataLoader(train_dataset, batch_size=cfg.data.batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=cfg.data.batch_size, shuffle=False)
+    val_loader = DataLoader(val_dataset, batch_size=1, shuffle=False)
 
     # 生成加载模型
     model = gen_model(cfg)
