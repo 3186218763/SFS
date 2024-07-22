@@ -10,7 +10,7 @@ data:
   pred_len: 1
   label_len: 50
   batch_size: 16
-  train_split: 0.9
+  train_split: 0.99
   shuffle: True
 
 train:

@@ -23,9 +23,9 @@ def main(cfg: DictConfig):
     logger = logging.getLogger(__name__)
 
     # 构建原始的dataset
-    dataset = TimeSeriesDataset(cfg.data.csv_file, cfg.data.seq_len, cfg.data.pred_len)
+    dataset = TimeSeriesDataset(cfg.data.csv_file, cfg.model.seq_len, cfg.model.pred_len)
     dataset_size = len(dataset)
-    train_size = int(cfg.data.train_split * dataset_size)  # 90% 用于训练
+    train_size = int(cfg.data.train_split * dataset_size)
     val_size = dataset_size - train_size  # 剩下的 10% 用于验证
 
     # 创建训练和验证数据集，按顺序分离
@@ -68,9 +68,9 @@ def main(cfg: DictConfig):
                 y_mark = batch['y_time'].to(device)
                 y = batch['y'].to(device)
 
-                zeros = torch.zeros_like(y[:, cfg.data.label_len:]).to(device)
+                zeros = torch.zeros_like(y[:, cfg.model.label_len:]).to(device)
 
-                dec_inp = torch.cat([y[:, :cfg.data.label_len], zeros], dim=1).float().to(device)
+                dec_inp = torch.cat([y[:, :cfg.model.label_len], zeros], dim=1).float().to(device)
 
                 outputs = model(x, x_mark, dec_inp, y_mark)
                 loss = loss_fn(outputs, y)

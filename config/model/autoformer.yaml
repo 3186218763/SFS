@@ -1,6 +1,9 @@
 # config/model/autoformer.yaml
 _target_: "train.AutoformerConfig"
 name: 'autoformer'
+seq_len: 100
+pred_len: 100
+label_len: 50
 d_model: 512
 n_heads: 8
 d_ff: 2048

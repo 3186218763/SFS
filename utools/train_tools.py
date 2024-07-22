@@ -14,9 +14,9 @@ def gen_model(cfg: DictConfig) -> nn.Module:
 
     if name == 'autoformer':
         model = Autoformer(
-            seq_len=cfg.data.seq_len,
-            pred_len=cfg.data.pred_len,
-            label_len=cfg.data.label_len,
+            seq_len=cfg.model.seq_len,
+            pred_len=cfg.model.pred_len,
+            label_len=cfg.model.label_len,
             moving_avg=cfg.model.moving_avg,
             enc_in=cfg.model.enc_in,
             d_model=cfg.model.d_model,
