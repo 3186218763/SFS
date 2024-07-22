@@ -1,0 +1,10 @@
+# config/model/lstm.yaml
+_target_: "train.LSTMConfig"
+name: lstm
+input_size: 7
+hidden_size: 256
+num_layers: 2
+dropout: 0.2
+pred_len: 1
+d_model: 512
+

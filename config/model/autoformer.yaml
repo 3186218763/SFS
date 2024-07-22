@@ -1,0 +1,15 @@
+# config/model/autoformer.yaml
+_target_: "train.AutoformerConfig"
+name: 'autoformer'
+d_model: 512
+n_heads: 8
+d_ff: 2048
+dropout: 0.2
+activation: "gelu"
+e_layers: 2
+d_layers: 1
+moving_avg: 25
+c_out: 1
+enc_in: 7
+factor: 1
+

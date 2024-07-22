@@ -1,0 +1,9 @@
+torch
+omegaconf~=2.3.0
+hydra-core
+numpy
+einops~=0.8.0
+pandas
+tqdm~=4.66.2
+h5py
+matplotlib
