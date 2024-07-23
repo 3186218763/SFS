@@ -2,9 +2,12 @@
 _target_: "train.LSTMConfig"
 name: lstm
 input_size: 7
+label_len: 50
+seq_len: 100
+pred_len: 1
 hidden_size: 256
 num_layers: 2
 dropout: 0.2
-pred_len: 1
 d_model: 512
+
 

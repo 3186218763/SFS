@@ -87,21 +87,3 @@ class Autoformer(nn.Module):
         return dec_out[:, -self.pred_len:]  # [B, L]
 
 
-if __name__ == '__main__':
-    """
-    参数说明
-    seq_len: 输入序列的长度。
-    label_len: 标签序列的长度（用于趋势初始化）。
-    pred_len: 预测序列的长度。
-    moving_avg: 移动平均的窗口大小。
-    enc_in: 编码器输入的特征维度。
-    d_model: 模型的隐藏维度。
-    dropout: Dropout概率。
-    n_heads: 多头注意力的头数。
-    d_ff: 前馈神经网络的维度。
-    e_layers: 编码器层数。
-    d_layers: 解码器层数。
-    activation: 激活函数类型。
-    c_out: 输出的特征维度。
-    """
-    # 测试代码

@@ -26,7 +26,6 @@ def main(cfg: DictConfig):
     dataset = TimeSeriesDataset(cfg.data.csv_file, cfg.model.seq_len, cfg.model.pred_len)
     dataset_size = len(dataset)
     train_size = int(cfg.data.train_split * dataset_size)
-    val_size = dataset_size - train_size  # 剩下的 10% 用于验证
 
     # 创建训练和验证数据集，按顺序分离
     indices = list(range(dataset_size))
@@ -112,8 +111,14 @@ def main(cfg: DictConfig):
     all_true_values = []
     all_predicted_values = []
 
+    # 设置测试的批次数量
+    num_batches_to_test = 500 // cfg.model.pred_len
+
     with torch.no_grad():
         for batch_idx, batch in enumerate(val_loader):
+            if batch_idx >= num_batches_to_test:
+                break
+
             x = batch['x'].to(device)
             x_mark = batch['x_time'].to(device)
             y_mark = batch['y_time'].to(device)
@@ -144,8 +149,8 @@ def main(cfg: DictConfig):
     plt.xlabel('Time')
     plt.ylabel('Value')
     plt.legend()
-    plt.title('Validation: True vs Predicted Values (First 5 Batches)')
-    plt.savefig(os.path.join(run_dir, 'val_plot_first_5_batches.png'))
+    plt.title(f'{cfg.model.name}: True vs. Predicted')
+    plt.savefig(os.path.join(run_dir, f'{cfg.model.name}.png'))
     plt.close()
 
 

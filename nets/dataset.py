@@ -69,9 +69,9 @@ class TimeSeriesDataset(Dataset):
 if __name__ == '__main__':
 
     seq_len = 100
-    pred_len = 100
+    pred_len = 5
     batch_size = 16
-    label_len = 0
+    label_len = 2
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = Autoformer(
