@@ -66,7 +66,7 @@ class BiGRU(nn.Module):
     def __init__(self, input_size, d_model, hidden_size, pred_len, num_layers, dropout):
         super().__init__()
         self.data_embedding = nn.Linear(input_size, d_model)
-        self.lstm = nn.GRU(d_model, hidden_size, num_layers, batch_first=True, dropout=dropout, bidirectional=True)
+        self.gru = nn.GRU(d_model, hidden_size, num_layers, batch_first=True, dropout=dropout, bidirectional=True)
         self.fc = nn.Sequential(
             nn.Linear(hidden_size * 2, hidden_size // 4),  # *2 because of bidirectional
             nn.ReLU(),
@@ -76,7 +76,7 @@ class BiGRU(nn.Module):
 
     def forward(self, x_enc, x_mark_enc=None, x_dec=None, x_mark_dec=None):
         x = self.data_embedding(x_enc)
-        x, _ = self.lstm(x)
+        x, _ = self.gru(x)
         x = x[:, -1, :]  # Take the last timestep's output
         out = self.fc(x)
         return out

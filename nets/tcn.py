@@ -70,7 +70,7 @@ class TCN_LSTM(nn.Module):
                  num_channels,
                  lstm_hidden_size,
                  lstm_num_layers,
-                 output_size,
+                 pred_len,
                  kernel_size,
                  dropout):
         super().__init__()
@@ -80,14 +80,14 @@ class TCN_LSTM(nn.Module):
             nn.Linear(lstm_hidden_size, lstm_hidden_size // 4),
             nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(lstm_hidden_size // 4, output_size)
+            nn.Linear(lstm_hidden_size // 4, pred_len)
         )
 
     def forward(self, x_enc, x_mark_enc=None, x_dec=None, x_mark_dec=None):
         # TCN input (batch, input_channel, sequence_length)
         tcn_output = self.tcn(x_enc.transpose(1, 2)).transpose(1, 2)
         # LSTM input (batch, sequence_length, input_size)
-        lstm_output = self.lstm(tcn_output)
-        output = self.mlp(lstm_output[:, -1, :])
+        lstm_output, _ = self.lstm(tcn_output)
+        output = lstm_output[:, -1, :]
+        output = self.mlp(output)
         return output
-

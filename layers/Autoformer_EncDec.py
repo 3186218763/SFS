@@ -180,10 +180,3 @@ class Decoder(nn.Module):
         return x, trend
 
 
-class MultiHeadCompression(nn.Module):
-    def __init__(self, dim, num_heads=4):
-        super().__init__()
-        self.heads = nn.ModuleList([nn.Linear(dim, 1) for _ in range(num_heads)])
-
-    def forward(self, x):
-        return torch.cat([head(x) for head in self.heads], dim=-1).mean(dim=-1)

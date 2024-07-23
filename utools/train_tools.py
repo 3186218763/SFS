@@ -7,6 +7,7 @@ from omegaconf import DictConfig
 
 from nets.autoformer import Autoformer
 from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
+from nets.tcn import TCN_LSTM
 
 
 def gen_model(cfg: DictConfig) -> nn.Module:
@@ -64,6 +65,16 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             dropout=cfg.model.dropout,
             d_model=cfg.model.d_model,
             pred_len=cfg.model.pred_len,
+        )
+    elif name == 'tcn_lstm':
+        model = TCN_LSTM(
+            input_size=cfg.model.input_size,
+            num_channels=cfg.model.num_channels,
+            lstm_hidden_size=cfg.model.lstm_hidden_size,
+            lstm_num_layers=cfg.model.lstm_num_layers,
+            dropout=cfg.model.dropout,
+            pred_len=cfg.model.pred_len,
+            kernel_size=cfg.model.kernel_size,
         )
     else:
         raise ValueError(f'还没有提供这个模型: {name}')

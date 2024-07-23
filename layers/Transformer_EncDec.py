@@ -36,17 +36,17 @@ class EncoderLayer(nn.Module):
         self.activation = F.relu if activation == "relu" else F.gelu
 
     def forward(self, x, attn_mask=None):
-        new_x, attn = self.attention(
+        # x [B, L, D]
+        x = x + self.dropout(self.attention(
             x, x, x,
             attn_mask=attn_mask
-        )
-        x = x + self.dropout(new_x)
+        ))
 
         y = x = self.norm1(x)
         y = self.dropout(self.activation(self.conv1(y.transpose(-1, 1))))
         y = self.dropout(self.conv2(y).transpose(-1, 1))
 
-        return self.norm2(x + y), attn
+        return self.norm2(x + y)
 
 
 class Encoder(nn.Module):
@@ -58,23 +58,19 @@ class Encoder(nn.Module):
 
     def forward(self, x, attn_mask=None):
         # x [B, L, D]
-        attns = []
         if self.conv_layers is not None:
             for attn_layer, conv_layer in zip(self.attn_layers, self.conv_layers):
-                x, attn = attn_layer(x, attn_mask=attn_mask)
+                x = attn_layer(x, attn_mask=attn_mask)
                 x = conv_layer(x)
-                attns.append(attn)
-            x, attn = self.attn_layers[-1](x)
-            attns.append(attn)
+            x = self.attn_layers[-1](x)
         else:
             for attn_layer in self.attn_layers:
-                x, attn = attn_layer(x, attn_mask=attn_mask)
-                attns.append(attn)
+                x = attn_layer(x, attn_mask=attn_mask)
 
         if self.norm is not None:
             x = self.norm(x)
 
-        return x, attns
+        return x
 
 
 class DecoderLayer(nn.Module):
@@ -96,13 +92,13 @@ class DecoderLayer(nn.Module):
         x = x + self.dropout(self.self_attention(
             x, x, x,
             attn_mask=x_mask
-        )[0])
+        ))
         x = self.norm1(x)
 
         x = x + self.dropout(self.cross_attention(
             x, cross, cross,
             attn_mask=cross_mask
-        )[0])
+        ))
 
         y = x = self.norm2(x)
         y = self.dropout(self.activation(self.conv1(y.transpose(-1, 1))))
@@ -112,11 +108,10 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, layers, norm_layer=None, projection=None):
+    def __init__(self, layers, norm_layer=None):
         super(Decoder, self).__init__()
         self.layers = nn.ModuleList(layers)
         self.norm = norm_layer
-        self.projection = projection
 
     def forward(self, x, cross, x_mask=None, cross_mask=None):
         for layer in self.layers:
@@ -125,6 +120,4 @@ class Decoder(nn.Module):
         if self.norm is not None:
             x = self.norm(x)
 
-        if self.projection is not None:
-            x = self.projection(x)
         return x

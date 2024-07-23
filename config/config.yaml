@@ -2,7 +2,7 @@ version_base: 1.3
 
 defaults:
   - _self_
-  - model: autoformer
+  - model: tcn_lstm
 
 data:
   csv_file: "./data/巴河桥.csv"
@@ -12,9 +12,9 @@ data:
   num_workers: 4
 
 train:
-  is_train: True
-  load_dir:
-  epochs: 100        # 训练轮数
+  is_train: False
+  load_dir: "./outputs/2024-07-23/20-31-48/best_model.pth"
+  epochs: 150        # 训练轮数
   learning_rate: 1e-3
   step_size: 15       # 学习率调度的步长
   gamma: 0.5          # 学习率衰减因子

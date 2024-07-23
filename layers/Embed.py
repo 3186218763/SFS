@@ -88,3 +88,6 @@ class DataEmbedding_wo_pos(nn.Module):
         out = self.dropout(x + x_mark)
 
         return out
+
+
+
