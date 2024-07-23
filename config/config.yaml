@@ -12,8 +12,8 @@ data:
   num_workers: 4
 
 train:
-  is_train: True
-  load_dir:
+  is_train: False
+  load_dir: "./outputs/2024-07-23/16-53-22/best_model.pth"
   epochs: 150        # 训练轮数
   learning_rate: 1e-3
   step_size: 10       # 学习率调度的步长

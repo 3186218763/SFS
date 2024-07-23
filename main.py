@@ -12,7 +12,7 @@ from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader, Subset
 
 from nets.dataset import TimeSeriesDataset
-from utools.train_tools import setup_logging, gen_model
+from utools.train_tools import setup_logging, gen_model, draw_loss_curve
 
 
 @hydra.main(version_base=None, config_path="config", config_name="config")
@@ -95,13 +95,7 @@ def main(cfg: DictConfig):
 
             # 每10个epoch绘制一次损失曲线
             if (epoch + 1) % 10 == 0:
-                plt.figure()
-                plt.plot(range(1, len(train_losses) + 1), train_losses, label='Train Loss')
-                plt.xlabel('Epoch')
-                plt.ylabel('Loss')
-                plt.legend()
-                plt.savefig(os.path.join(run_dir, f'loss_curve.png'))
-                plt.close()
+                draw_loss_curve(train_losses, run_dir)
 
         logger.info("训练完成。")
 

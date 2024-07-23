@@ -1,6 +1,7 @@
 import logging
 import os
 
+import matplotlib.pyplot as plt
 import torch.nn as nn
 from omegaconf import DictConfig
 
@@ -91,3 +92,13 @@ def setup_logging(run_dir):
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         encoding='utf-8'
     )
+
+
+def draw_loss_curve(train_losses, run_dir):
+    plt.figure()
+    plt.plot(range(1, len(train_losses) + 1), train_losses, label='Train Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.savefig(os.path.join(run_dir, f'loss_curve.png'))
+    plt.close()
