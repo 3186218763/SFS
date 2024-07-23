@@ -1,6 +1,6 @@
 # config/model/lstm.yaml
-_target_: "train.LSTMConfig"
-name: lstm
+_target_: "train.BiLSTMConfig"
+name: bilstm
 input_size: 7
 label_len: 0
 seq_len: 100
@@ -9,5 +9,3 @@ hidden_size: 256
 num_layers: 2
 dropout: 0.2
 d_model: 512
-
-

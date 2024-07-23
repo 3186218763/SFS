@@ -5,7 +5,7 @@ import torch.nn as nn
 from omegaconf import DictConfig
 
 from nets.autoformer import Autoformer
-from nets.lstm import LSTM, GRU
+from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
 
 
 def gen_model(cfg: DictConfig) -> nn.Module:
@@ -37,8 +37,26 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             d_model=cfg.model.d_model,
             pred_len=cfg.model.pred_len,
         )
+    elif name == 'bilstm':
+        model = BiLSTM(
+            input_size=cfg.model.input_size,
+            hidden_size=cfg.model.hidden_size,
+            num_layers=cfg.model.num_layers,
+            dropout=cfg.model.dropout,
+            d_model=cfg.model.d_model,
+            pred_len=cfg.model.pred_len,
+        )
     elif name == 'gru':
         model = GRU(
+            input_size=cfg.model.input_size,
+            hidden_size=cfg.model.hidden_size,
+            num_layers=cfg.model.num_layers,
+            dropout=cfg.model.dropout,
+            d_model=cfg.model.d_model,
+            pred_len=cfg.model.pred_len,
+        )
+    elif name == 'bigru':
+        model = BiGRU(
             input_size=cfg.model.input_size,
             hidden_size=cfg.model.hidden_size,
             num_layers=cfg.model.num_layers,

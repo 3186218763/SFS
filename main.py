@@ -124,9 +124,7 @@ def main(cfg: DictConfig):
             y_mark = batch['y_time'].to(device)
             y = batch['y'].to(device)
 
-            zeros = torch.zeros_like(y[:, 0:]).to(device)
-
-            dec_inp = torch.cat([y[:, :0], zeros], dim=1).float().to(device)
+            dec_inp = torch.zeros_like(y).to(device)
 
             outputs = model(x, x_mark, dec_inp, y_mark)
 
