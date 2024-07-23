@@ -59,6 +59,11 @@ class Autoformer(nn.Module):
             norm_layer=Seasonal_Layernorm(d_model),
             projection=nn.Linear(d_model, c_out, bias=True)
         )
+        self.fc = nn.Sequential(
+            nn.Linear(enc_in, enc_in//2),
+            nn.GELU(),
+            nn.Linear(enc_in//2, 1),
+        )
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
@@ -82,8 +87,10 @@ class Autoformer(nn.Module):
 
         # final
         dec_out = trend_part + seasonal_part
-        dec_out = dec_out.mean(dim=2)
 
-        return dec_out[:, -self.pred_len:]  # [B, L]
+        B, L, D = dec_out.shape
+        dec_out = dec_out.view(B * L, D)
+        output = self.fc(dec_out)
+        output = output.view(B, L)  # [B, L]
 
-
+        return output[:, -self.pred_len:]

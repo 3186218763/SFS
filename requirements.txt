@@ -7,3 +7,4 @@ pandas
 tqdm~=4.66.2
 h5py
 matplotlib
+reformer_pytorch

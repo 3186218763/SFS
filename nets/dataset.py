@@ -104,8 +104,8 @@ if __name__ == '__main__':
         zeros = torch.zeros_like(y[:, label_len:]).to(device)
 
         dec_inp = torch.cat([y[:, :label_len], zeros], dim=1).float().to(device)
-        print(dec_inp)
-        out = model(x, x_mark, dec_inp, y_mark)
 
+        out = model(x, x_mark, dec_inp, y_mark)
+        print(out.shape)
 
         break
