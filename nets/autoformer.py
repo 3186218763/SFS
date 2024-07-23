@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from layers.Embed import DataEmbedding_wo_pos
 from layers.AutoCorrelation import AutoCorrelation, AutoCorrelationLayer
-from layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, Seasonal_Layernorm, series_decomp
+from layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, Seasonal_Layernorm, series_decomp, MultiHeadCompression
 
 
 class Autoformer(nn.Module):
@@ -59,11 +59,8 @@ class Autoformer(nn.Module):
             norm_layer=Seasonal_Layernorm(d_model),
             projection=nn.Linear(d_model, c_out, bias=True)
         )
-        self.fc = nn.Sequential(
-            nn.Linear(enc_in, enc_in//2),
-            nn.GELU(),
-            nn.Linear(enc_in//2, 1),
-        )
+
+        self.multiHeadCompression = MultiHeadCompression(enc_in)
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
@@ -88,9 +85,6 @@ class Autoformer(nn.Module):
         # final
         dec_out = trend_part + seasonal_part
 
-        B, L, D = dec_out.shape
-        dec_out = dec_out.view(B * L, D)
-        output = self.fc(dec_out)
-        output = output.view(B, L)  # [B, L]
+        output = self.multiHeadCompression(dec_out)
 
         return output[:, -self.pred_len:]

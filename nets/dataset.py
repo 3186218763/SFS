@@ -4,6 +4,7 @@ from sklearn.preprocessing import MinMaxScaler
 from torch.utils.data import DataLoader, Dataset
 
 from nets.autoformer import Autoformer
+from nets.informer import Informer
 
 
 class TimeSeriesDataset(Dataset):
@@ -74,6 +75,23 @@ if __name__ == '__main__':
     label_len = 2
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    # model = Informer(
+    #     enc_in=7,
+    #     dec_in=4,
+    #     d_model=512,
+    #     dropout=0.1,
+    #     n_heads=8,
+    #     d_ff=2048,
+    #     d_layers=1,
+    #     e_layers=1,
+    #     factor=1.0,
+    #     pred_len=pred_len,
+    #     c_out=1,
+    #     activation='gelu'
+    #
+    #
+    # ).to(device)
     model = Autoformer(
         seq_len=seq_len,
         label_len=label_len,  # seq-pre
@@ -104,7 +122,7 @@ if __name__ == '__main__':
         zeros = torch.zeros_like(y[:, label_len:]).to(device)
 
         dec_inp = torch.cat([y[:, :label_len], zeros], dim=1).float().to(device)
-
+        print(dec_inp.shape)
         out = model(x, x_mark, dec_inp, y_mark)
         print(out.shape)
 

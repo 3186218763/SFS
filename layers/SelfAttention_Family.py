@@ -8,10 +8,11 @@ from reformer_pytorch import LSHSelfAttention
 
 
 class FullAttention(nn.Module):
-    def __init__(self, mask_flag=True, scale=None, attention_dropout=0.1):
+    def __init__(self, mask_flag=True, factor=5, scale=None, attention_dropout=0.1, output_attention=False):
         super(FullAttention, self).__init__()
         self.scale = scale
         self.mask_flag = mask_flag
+        self.output_attention = output_attention
         self.dropout = nn.Dropout(attention_dropout)
 
     def forward(self, queries, keys, values, attn_mask):
@@ -30,19 +31,22 @@ class FullAttention(nn.Module):
         A = self.dropout(torch.softmax(scale * scores, dim=-1))
         V = torch.einsum("bhls,bshd->blhd", A, values)
 
-        return V.contiguous()
+        if self.output_attention:
+            return (V.contiguous(), A)
+        else:
+            return (V.contiguous(), None)
 
 
 class ProbAttention(nn.Module):
-    def __init__(self, mask_flag=True, factor=5, scale=None, attention_dropout=0.1):
+    def __init__(self, mask_flag=True, factor=5, scale=None, attention_dropout=0.1, output_attention=False):
         super(ProbAttention, self).__init__()
         self.factor = factor
         self.scale = scale
         self.mask_flag = mask_flag
+        self.output_attention = output_attention
         self.dropout = nn.Dropout(attention_dropout)
 
-    @staticmethod
-    def _prob_QK(Q, K, sample_k, n_top):  # n_top: c*ln(L_q)
+    def _prob_QK(self, Q, K, sample_k, n_top):  # n_top: c*ln(L_q)
         # Q [B, H, L, D]
         B, H, L_K, E = K.shape
         _, _, L_Q, _ = Q.shape
@@ -88,8 +92,12 @@ class ProbAttention(nn.Module):
         context_in[torch.arange(B)[:, None, None],
         torch.arange(H)[None, :, None],
         index, :] = torch.matmul(attn, V).type_as(context_in)
-
-        return context_in
+        if self.output_attention:
+            attns = (torch.ones([B, H, L_V, L_V]) / L_V).type_as(attn).to(attn.device)
+            attns[torch.arange(B)[:, None, None], torch.arange(H)[None, :, None], index, :] = attn
+            return (context_in, attns)
+        else:
+            return (context_in, None)
 
     def forward(self, queries, keys, values, attn_mask):
         B, L_Q, H, D = queries.shape
