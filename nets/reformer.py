@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-from layers.Transformer_EncDec import Encoder, EncoderLayer, ConvLayer
-from layers.SelfAttention_Family import ReformerLayer
+
 from layers.Embed import DataEmbedding
+from layers.SelfAttention_Family import ReformerLayer
+from layers.Transformer_EncDec import Encoder, EncoderLayer
 
 
 class Reformer(nn.Module):
@@ -28,9 +29,8 @@ class Reformer(nn.Module):
 
         self.encoder_layer = EncoderLayer(self.reformer_layer, d_model, d_ff, dropout=dropout, activation=activation)
 
-        self.conv_layer = ConvLayer(d_model)
         self.norm_layer = nn.LayerNorm(d_model)
-        self.encoder = Encoder(self.encoder_layer, self.conv_layer, self.norm_layer, e_layers)
+        self.encoder = Encoder(self.encoder_layer, None, self.norm_layer, e_layers)
 
         self.projection = nn.Linear(d_model, c_out, bias=True)
 
@@ -45,6 +45,7 @@ class Reformer(nn.Module):
 
         # Reformer: encoder only
         enc_out = self.enc_embedding(x_enc, x_mark_enc)
+
         enc_out = self.encoder(enc_out, attn_mask=enc_self_mask)
         enc_out = self.projection(enc_out)
         output = enc_out[:, -self.pred_len:, :]  # [B, L, D]

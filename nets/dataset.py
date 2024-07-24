@@ -70,10 +70,10 @@ class TimeSeriesDataset(Dataset):
 
 if __name__ == '__main__':
 
-    seq_len = 100
-    pred_len = 20
+    seq_len = 230
+    pred_len = 100
     batch_size = 16
-    label_len = 10
+    label_len = 50
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
