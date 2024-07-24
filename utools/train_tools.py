@@ -8,6 +8,7 @@ from omegaconf import DictConfig
 from nets.autoformer import Autoformer
 from nets.informer import Informer
 from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
+from nets.reformer import Reformer
 from nets.tcn import TCN_LSTM
 
 
@@ -47,6 +48,22 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             attn=cfg.model.attn,
             activation=cfg.model.activation,
 
+        )
+    elif name == 'reformer':
+        model = Reformer(
+            enc_in=cfg.model.enc_in,
+            d_model=cfg.model.d_model,
+            dropout=cfg.model.dropout,
+            e_layers=cfg.model.e_layers,
+            n_heads=cfg.model.n_heads,
+            bucket_size=cfg.model.bucket_size,
+            n_hashes=cfg.model.n_hashes,
+            d_ff=cfg.model.d_ff,
+            c_out=cfg.model.c_out,
+            label_len=cfg.model.label_len,
+            seq_len=cfg.model.seq_len,
+            pred_len=cfg.model.pred_len,
+            activation=cfg.model.activation,
         )
     elif name == 'lstm':
         model = LSTM(

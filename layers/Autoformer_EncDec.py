@@ -85,30 +85,21 @@ class EncoderLayer(nn.Module):
 
 
 class Encoder(nn.Module):
-    """
-    Autoformer encoder
-    """
 
-    def __init__(self, attn_layers, conv_layers=None, norm_layer=None):
+    def __init__(self, encoder_layer, conv_layer=None, norm_layer=None, num_layers=1):
         super().__init__()
-        self.attn_layers = nn.ModuleList(attn_layers)
-        self.conv_layers = nn.ModuleList(conv_layers) if conv_layers is not None else None
+
+        self.conv_layer = conv_layer
         self.norm = norm_layer
+        self.encoder_layers = nn.ModuleList([copy.deepcopy(encoder_layer) for _ in range(num_layers)])
 
     def forward(self, x, attn_mask=None):
-        if self.conv_layers is not None:
-            for attn_layer, conv_layer in zip(self.attn_layers, self.conv_layers):
-                x = attn_layer(x, attn_mask=attn_mask)
-                x = conv_layer(x)
-            x = self.attn_layers[-1](x)
-
-        else:
-            for attn_layer in self.attn_layers:
-                x = attn_layer(x, attn_mask=attn_mask)
-
+        for layer in self.encoder_layers:
+            x = layer(x, attn_mask)
+            if self.conv_layer is not None:
+                x = self.conv_layer(x)
         if self.norm is not None:
             x = self.norm(x)
-
         return x
 
 
@@ -152,18 +143,17 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    """
-    Autoformer encoder
-    """
 
-    def __init__(self, layers, norm_layer=None, projection=None):
-        super(Decoder, self).__init__()
-        self.layers = nn.ModuleList(layers)
+    def __init__(self, decoder_layer, norm_layer=None, projection=None, num_layers=1):
+        super().__init__()
+
         self.norm = norm_layer
         self.projection = projection
 
+        self.decoder_layers = nn.ModuleList([copy.deepcopy(decoder_layer) for _ in range(num_layers)])
+
     def forward(self, x, cross, x_mask=None, cross_mask=None, trend=None):
-        for layer in self.layers:
+        for layer in self.decoder_layers:
             x, residual_trend = layer(x, cross, x_mask=x_mask, cross_mask=cross_mask)
             trend = trend + residual_trend
 
@@ -172,4 +162,5 @@ class Decoder(nn.Module):
 
         if self.projection is not None:
             x = self.projection(x)
+
         return x, trend

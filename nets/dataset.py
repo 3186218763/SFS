@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from nets.autoformer import Autoformer
 from nets.informer import Informer
+from nets.reformer import Reformer
 
 
 class TimeSeriesDataset(Dataset):
@@ -72,24 +73,24 @@ if __name__ == '__main__':
     seq_len = 100
     pred_len = 20
     batch_size = 16
-    label_len = 2
+    label_len = 10
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    model = Informer(
-        enc_in=7,
-        dec_in=1,
-        d_model=512,
-        dropout=0.1,
-        n_heads=8,
-        d_ff=2048,
-        d_layers=1,
-        e_layers=1,
-        factor=5.0,
-        pred_len=pred_len,
-        c_out=1,
-        activation='gelu'
-    ).to(device)
+    # model = Informer(
+    #     enc_in=7,
+    #     dec_in=1,
+    #     d_model=512,
+    #     dropout=0.1,
+    #     n_heads=8,
+    #     d_ff=2048,
+    #     d_layers=1,
+    #     e_layers=1,
+    #     factor=5.0,
+    #     pred_len=pred_len,
+    #     c_out=1,
+    #     activation='gelu'
+    # ).to(device)
     # model = Autoformer(
     #     seq_len=seq_len,
     #     label_len=label_len,  # seq-pre
@@ -107,6 +108,21 @@ if __name__ == '__main__':
     #     factor=1.0
     # ).to(device)
     # 创建数据集和数据加载器
+    model = Reformer(
+        enc_in=7,
+        d_model=512,
+        dropout=0.1,
+        e_layers=2,
+        n_heads=8,
+        bucket_size=8,
+        n_hashes=4,
+        d_ff=2048,
+        c_out=1,
+        activation='gelu',
+        pred_len=pred_len,
+        seq_len=seq_len,
+        label_len=label_len
+    ).to(device)
     dataset = TimeSeriesDataset(csv_file, seq_len, pred_len)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 

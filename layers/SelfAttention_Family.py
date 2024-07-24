@@ -173,4 +173,4 @@ class ReformerLayer(nn.Module):
         # in Reformer: defalut queries=keys
         B, N, C = queries.shape
         queries = self.attn(self.fit_length(queries))[:, :N, :]
-        return queries, None
+        return queries
