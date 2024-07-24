@@ -3,7 +3,6 @@ import torch.nn as nn
 from layers.Embed import DataEmbedding_wo_pos
 from layers.AutoCorrelation import AutoCorrelation, AutoCorrelationLayer, MultiHeadCompression
 from layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, Seasonal_Layernorm, series_decomp
-from layers.Transformer_EncDec import ConvLayer
 
 
 class Autoformer(nn.Module):
@@ -32,9 +31,8 @@ class Autoformer(nn.Module):
         self.attn = AutoCorrelationLayer(AutoCorrelation(factor, attention_dropout=dropout), d_model, n_heads)
         self.encoder_layer = EncoderLayer(self.attn, d_model, d_ff, moving_avg=moving_avg, dropout=dropout,
                                           activation=activation)
-        self.conv_layer = ConvLayer(d_model)
         self.norm_layer = Seasonal_Layernorm(d_model)
-        self.encoder = Encoder(self.encoder_layer, self.conv_layer, self.norm_layer, e_layers)
+        self.encoder = Encoder(self.encoder_layer, conv_layer=None, norm_layer=self.norm_layer, num_layers=e_layers)
 
         # Decoder
         self.self_attn = AutoCorrelationLayer(AutoCorrelation(True, attention_dropout=dropout),
@@ -71,6 +69,7 @@ class Autoformer(nn.Module):
 
         # final
         dec_out = trend_part + seasonal_part
+        dec_out = dec_out[:, -self.pred_len:, :]
         output = self.multiHeadCompression(dec_out)
 
-        return output[:, -self.pred_len:]
+        return output
