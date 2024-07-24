@@ -43,8 +43,8 @@ def main(cfg: DictConfig):
     # 生成加载模型
     model = gen_model(cfg)
     model = model.to(device)
-    if cfg.train.load_dir is not None:
-        model.load_state_dict(torch.load(cfg.train.load_dir))
+    if cfg.path.load_dir is not None:
+        model.load_state_dict(torch.load(cfg.path.load_dir))
         logger.info("模型参数加载成功")
 
     # 训练部分
