@@ -5,23 +5,23 @@ import math
 
 class AutoCorrelation(nn.Module):
     """
-    1.基于周期的依赖关系发现：在这一阶段，模型会发现时间序列数据中的周期性依赖关系。
-    这意味着模型会识别出数据在特定周期内重复出现的模式和趋势。
-
-    2.时间延迟聚合：在这一阶段，模型会对这些周期性依赖关系进行时间延迟聚合。
-    这意味着模型会结合在不同时间延迟下的数据点，从而更好地捕捉时间序列中的长期依赖关系。
-
+    AutoCorrelation Mechanism with the following two phases:
+    (1) period-based dependencies discovery
+    (2) time delay aggregation
+    This block can replace the self-attention family mechanism seamlessly.
     """
 
-    def __init__(self, factor=1, scale=None, attention_dropout=0.1):
+    def __init__(self, mask_flag=True, factor=1, scale=None, attention_dropout=0.1):
         super().__init__()
         self.factor = factor
         self.scale = scale
+        self.mask_flag = mask_flag
         self.dropout = nn.Dropout(attention_dropout)
 
     def time_delay_agg_training(self, values, corr):
         """
-        这是对AutoCorrelation机制加速版本的简要描述，特别是用于训练阶段。该机制具有类似于批归一化
+        SpeedUp version of Autocorrelation (a batch-normalization style design)
+        This is for the training phase.
         """
         head = values.shape[1]
         channel = values.shape[2]
@@ -95,7 +95,7 @@ class AutoCorrelation(nn.Module):
             delays_agg = delays_agg + pattern * (tmp_corr[..., i].unsqueeze(-1))
         return delays_agg
 
-    def forward(self, queries, keys, values):
+    def forward(self, queries, keys, values, attn_mask):
         B, L, H, E = queries.shape
         _, S, _, D = values.shape
         if L > S:
@@ -149,10 +149,12 @@ class AutoCorrelationLayer(nn.Module):
             queries,
             keys,
             values,
+            attn_mask
         )
         out = out.view(B, L, -1)
 
         return self.out_projection(out), attn
+
 
 class MultiHeadCompression(nn.Module):
     def __init__(self, dim, num_heads=4):

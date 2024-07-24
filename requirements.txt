@@ -1,10 +1,10 @@
-torch
+torch~=2.3.0+cu118
 omegaconf~=2.3.0
 hydra-core
-numpy
+numpy~=1.26.4
 einops~=0.8.0
-pandas
+pandas~=2.2.2
 tqdm~=4.66.2
-h5py
-matplotlib
+matplotlib~=3.9.1
 reformer_pytorch
+scikit-learn

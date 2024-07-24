@@ -91,3 +91,4 @@ class TCN_LSTM(nn.Module):
         output = lstm_output[:, -1, :]
         output = self.mlp(output)
         return output
+
