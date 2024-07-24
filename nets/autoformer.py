@@ -84,7 +84,6 @@ class Autoformer(nn.Module):
 
         # final
         dec_out = trend_part + seasonal_part
-
         output = self.multiHeadCompression(dec_out)
 
         return output[:, -self.pred_len:]

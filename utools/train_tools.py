@@ -6,6 +6,7 @@ import torch.nn as nn
 from omegaconf import DictConfig
 
 from nets.autoformer import Autoformer
+from nets.informer import Informer
 from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
 from nets.tcn import TCN_LSTM
 
@@ -29,6 +30,23 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             activation=cfg.model.activation,
             c_out=cfg.model.c_out,
             factor=cfg.model.factor
+        )
+    elif name == 'informer':
+        model = Informer(
+            enc_in=cfg.model.enc_in,
+            dec_in=cfg.model.dec_in,
+            c_out=cfg.model.c_out,
+            pred_len=cfg.model.pred_len,
+            d_model=cfg.model.d_model,
+            n_heads=cfg.model.n_heads,
+            e_layers=cfg.model.e_layers,
+            d_layers=cfg.model.d_layers,
+            d_ff=cfg.model.d_ff,
+            dropout=cfg.model.dropout,
+            factor=cfg.model.factor,
+            attn=cfg.model.attn,
+            activation=cfg.model.activation,
+
         )
     elif name == 'lstm':
         model = LSTM(

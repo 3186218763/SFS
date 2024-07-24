@@ -53,10 +53,9 @@ class Informer(nn.Module):
                 )
                 for _ in range(d_layers)
             ],
-            norm_layer=torch.nn.LayerNorm(d_model)
+            norm_layer=torch.nn.LayerNorm(d_model),
+            projection=nn.Linear(d_model, c_out, bias=True)
         )
-
-        self.projection = nn.Linear(d_model, c_out, bias=True)
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
@@ -66,7 +65,6 @@ class Informer(nn.Module):
         x_dec = x_dec.unsqueeze(-1).expand(-1, -1, self.dec_in)
         dec_out = self.dec_embedding(x_dec, x_mark_dec)
         dec_out = self.decoder(dec_out, enc_out, x_mask=dec_self_mask, cross_mask=dec_enc_mask)
-        dec_out = self.projection(dec_out)
         dec_out = dec_out.squeeze(-1)
 
         return dec_out[:, -self.pred_len:]
