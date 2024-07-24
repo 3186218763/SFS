@@ -104,7 +104,6 @@ def gen_model(cfg: DictConfig) -> nn.Module:
     elif name == 'tcn_lstm':
         model = TCN_LSTM(
             input_size=cfg.model.input_size,
-            num_channels=cfg.model.num_channels,
             lstm_hidden_size=cfg.model.lstm_hidden_size,
             lstm_num_layers=cfg.model.lstm_num_layers,
             dropout=cfg.model.dropout,

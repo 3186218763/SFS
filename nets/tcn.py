@@ -67,16 +67,19 @@ class TCN_Module(nn.Module):
 class TCN_LSTM(nn.Module):
     def __init__(self,
                  input_size,
-                 num_channels,
                  lstm_hidden_size,
                  lstm_num_layers,
                  pred_len,
                  kernel_size,
                  dropout):
         super().__init__()
-        self.tcn = TCN_Module(input_size, num_channels, kernel_size, dropout)
-        self.lstm = nn.LSTM(num_channels[-1], lstm_hidden_size, lstm_num_layers, batch_first=True)
+        self.bilstm = nn.LSTM(input_size, lstm_hidden_size, lstm_num_layers, batch_first=True, bidirectional=True)
+        self.tcn = TCN_Module(lstm_hidden_size * 2, [lstm_hidden_size * 2, lstm_hidden_size * 2, lstm_hidden_size * 2], kernel_size, dropout)
+
         self.mlp = nn.Sequential(
+            nn.Linear(lstm_hidden_size * 2, lstm_hidden_size),  # 修改为 lstm_hidden_size * 2
+            nn.ReLU(),
+            nn.Dropout(dropout),
             nn.Linear(lstm_hidden_size, lstm_hidden_size // 4),
             nn.ReLU(),
             nn.Dropout(dropout),
@@ -84,11 +87,24 @@ class TCN_LSTM(nn.Module):
         )
 
     def forward(self, x_enc, x_mark_enc=None, x_dec=None, x_mark_dec=None):
-        # TCN input (batch, input_channel, sequence_length)
-        tcn_output = self.tcn(x_enc.transpose(1, 2)).transpose(1, 2)
-        # LSTM input (batch, sequence_length, input_size)
-        lstm_output, _ = self.lstm(tcn_output)
-        output = lstm_output[:, -1, :]
-        output = self.mlp(output)
-        return output
+        x, _ = self.bilstm(x_enc)
+        x = self.tcn(x.transpose(1, 2)).transpose(1, 2)
+        output = x[:, -1, :]  # 提取最后一个时间步的输出
 
+        output = self.mlp(output)
+        return output  # 返回最终预测结果
+
+
+
+if __name__ == '__main__':
+    seq_len = 230
+    input_size = 7
+    lstm_hidden_size = 515
+    lstm_num_layers = 3
+    pred_len = 10
+    kernel_size = 2
+    dropout = 0.1
+    tensor = torch.randn(1, seq_len, input_size, dtype=torch.float32)
+    model = TCN_LSTM(input_size, lstm_hidden_size, lstm_num_layers, pred_len, kernel_size, dropout)
+    out = model(tensor)
+    print(out.shape)
