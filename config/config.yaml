@@ -6,13 +6,13 @@ defaults:
 
 data:
   csv_file: "./data/巴河桥.csv"
-  batch_size: 32
+  batch_size: 16
   train_split: 0.9
   shuffle: True
   num_workers: 4
 
 train:
-  is_train: True
+  is_train: False
   epochs: 150        # 训练轮数
   learning_rate: 1e-3
   step_size: 15       # 学习率调度的步长
@@ -20,7 +20,7 @@ train:
   save_interval: 10   # 保存模型的轮数间隔
 
 path:
-  load_dir:
+  load_dir: './outputs/2024-07-24/18-03-21/best_model.pth'
 
 
 

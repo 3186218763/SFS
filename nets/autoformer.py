@@ -27,23 +27,43 @@ class Autoformer(nn.Module):
         self.enc_embedding = DataEmbedding_wo_pos(enc_in, d_model)
         self.dec_embedding = DataEmbedding_wo_pos(enc_in, d_model)
 
-        # Encoder
-        self.attn = AutoCorrelationLayer(AutoCorrelation(factor, attention_dropout=dropout), d_model, n_heads)
-        self.encoder_layer = EncoderLayer(self.attn, d_model, d_ff, moving_avg=moving_avg, dropout=dropout,
-                                          activation=activation)
-        self.norm_layer = Seasonal_Layernorm(d_model)
-        self.encoder = Encoder(self.encoder_layer, conv_layer=None, norm_layer=self.norm_layer, num_layers=e_layers)
-
+        self.encoder = Encoder(
+            [
+                EncoderLayer(
+                    AutoCorrelationLayer(
+                        AutoCorrelation(False, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    d_model,
+                    d_ff,
+                    moving_avg,
+                    dropout,
+                    activation
+                ) for _ in range(e_layers)
+            ],
+            norm_layer=Seasonal_Layernorm(d_model)
+        )
         # Decoder
-        self.self_attn = AutoCorrelationLayer(AutoCorrelation(True, attention_dropout=dropout),
-                                              d_model, n_heads)
-        self.cross_attn = AutoCorrelationLayer(AutoCorrelation(False, attention_dropout=dropout),
-                                               d_model, n_heads)
-        self.projection = nn.Linear(d_model, c_out, bias=True)
-        self.decoder_layer = DecoderLayer(self.self_attn, self.cross_attn, d_model, c_out, d_ff,
-                                          moving_avg=moving_avg, dropout=dropout, activation=activation)
-
-        self.decoder = Decoder(self.decoder_layer, self.norm_layer, self.projection, d_layers)
+        self.decoder = Decoder(
+            [
+                DecoderLayer(
+                    AutoCorrelationLayer(
+                        AutoCorrelation(True, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    AutoCorrelationLayer(
+                        AutoCorrelation(False, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    d_model,
+                    c_out,
+                    d_ff,
+                    moving_avg,
+                    dropout,
+                    activation,
+                )
+                for _ in range(d_layers)
+            ],
+            norm_layer=Seasonal_Layernorm(d_model),
+            projection=nn.Linear(d_model, c_out, bias=True)
+        )
 
         self.multiHeadCompression = MultiHeadCompression(enc_in)
 

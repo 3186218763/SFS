@@ -1,4 +1,4 @@
-torch~=2.3.0+cu118
+torch
 omegaconf~=2.3.0
 hydra-core
 numpy~=1.26.4

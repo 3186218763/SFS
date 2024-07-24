@@ -1,3 +1,5 @@
+import copy
+
 import torch.nn as nn
 import torch.nn.functional as F
 
@@ -47,20 +49,24 @@ class EncoderLayer(nn.Module):
 
 
 class Encoder(nn.Module):
-    def __init__(self, encoder_layer, conv_layer=None, norm_layer=None, num_layers=1):
-        super().__init__()
-        self.num_layers = num_layers
-        self.encoder_layers = encoder_layer
-        self.conv_layer = conv_layer
+    def __init__(self, attn_layers, conv_layers=None, norm_layer=None):
+        super(Encoder, self).__init__()
+        self.attn_layers = nn.ModuleList(attn_layers)
+        self.conv_layers = nn.ModuleList(conv_layers) if conv_layers is not None else None
         self.norm = norm_layer
 
     def forward(self, x, attn_mask=None):
         # x [B, L, D]
-        for _ in range(self.num_layers):
-            x = self.encoder_layers(x, attn_mask=attn_mask)
+        if self.conv_layers is not None:
+            for attn_layer, conv_layer in zip(self.attn_layers, self.conv_layers):
+                x = attn_layer(x, attn_mask=attn_mask)
+                x = conv_layer(x)
 
-            if self.conv_layer is not None:
-                x = self.conv_layer(x)
+            x = self.attn_layers[-1](x)
+
+        else:
+            for attn_layer in self.attn_layers:
+                x = attn_layer(x, attn_mask=attn_mask)
 
         if self.norm is not None:
             x = self.norm(x)
@@ -103,23 +109,19 @@ class DecoderLayer(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, decoder_layer, norm_layer=None, projection=None, num_layers=1):
+    def __init__(self, layers, norm_layer=None, projection=None):
         super().__init__()
-        self.layers = decoder_layer
+        self.layers = nn.ModuleList(layers)
         self.norm = norm_layer
         self.projection = projection
-        self.num_layers = num_layers
-        self.decoder_layer = decoder_layer
 
     def forward(self, x, cross, x_mask=None, cross_mask=None):
-
-        for _ in range(self.num_layers):
-            x = self.decoder_layer(x, cross, x_mask=x_mask, cross_mask=cross_mask)
+        for layer in self.layers:
+            x = layer(x, cross, x_mask=x_mask, cross_mask=cross_mask)
 
         if self.norm is not None:
             x = self.norm(x)
 
         if self.projection is not None:
             x = self.projection(x)
-
         return x

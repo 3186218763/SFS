@@ -76,36 +76,36 @@ if __name__ == '__main__':
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    # model = Informer(
-    #     enc_in=7,
-    #     dec_in=1,
-    #     d_model=512,
-    #     dropout=0.1,
-    #     n_heads=8,
-    #     d_ff=2048,
-    #     d_layers=1,
-    #     e_layers=1,
-    #     factor=5.0,
-    #     pred_len=pred_len,
-    #     c_out=1,
-    #     activation='gelu'
-    # ).to(device)
-    model = Autoformer(
-        seq_len=seq_len,
-        label_len=label_len,  # seq-pre
-        pred_len=pred_len,
-        moving_avg=25,
+    model = Informer(
         enc_in=7,
-        d_model=512,  # 根据需要调整
-        dropout=0.05,  # 根据需要调整
+        dec_in=1,
+        d_model=512,
+        dropout=0.1,
         n_heads=8,
-        d_ff=2048,  # 根据需要调整
-        e_layers=2,
+        d_ff=2048,
         d_layers=1,
-        activation='gelu',
+        e_layers=1,
+        factor=5.0,
+        pred_len=pred_len,
         c_out=1,
-        factor=1.0
+        activation='gelu'
     ).to(device)
+    # model = Autoformer(
+    #     seq_len=seq_len,
+    #     label_len=label_len,  # seq-pre
+    #     pred_len=pred_len,
+    #     moving_avg=25,
+    #     enc_in=7,
+    #     d_model=512,  # 根据需要调整
+    #     dropout=0.05,  # 根据需要调整
+    #     n_heads=8,
+    #     d_ff=2048,  # 根据需要调整
+    #     e_layers=2,
+    #     d_layers=1,
+    #     activation='gelu',
+    #     c_out=1,
+    #     factor=1.0
+    # ).to(device)
     # 创建数据集和数据加载器
     dataset = TimeSeriesDataset(csv_file, seq_len, pred_len)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)

@@ -8,34 +8,55 @@ from layers.Transformer_EncDec import Decoder, DecoderLayer, Encoder, EncoderLay
 class Informer(nn.Module):
     def __init__(self, enc_in, dec_in, c_out, pred_len, d_model,
                  n_heads, e_layers, d_layers, d_ff,
-                 dropout, factor=5, attn='prob', activation='gelu'):
+                 dropout, factor=5, activation='gelu'):
         super().__init__()
         self.dec_in = dec_in
         self.pred_len = pred_len
-        self.attn = attn
 
         # Encoding
         self.enc_embedding = DataEmbedding(enc_in, d_model)
         self.dec_embedding = DataEmbedding(dec_in, d_model)
 
-        # Attention Ñ¡Ôñ
-        Attn = ProbAttention if attn == 'prob' else FullAttention
-
         # Encoder
-        self.attn_layer = AttentionLayer(Attn(False, factor, attention_dropout=dropout), d_model, n_heads)
-        self.conv_layer = ConvLayer(d_model)
-        self.norm_layer = nn.LayerNorm(d_model)
-        self.encoder_layer = EncoderLayer(self.attn_layer, d_model, d_ff, dropout, activation)
-
-        self.encoder = Encoder(self.encoder_layer, self.conv_layer, self.norm_layer, e_layers)
-
+        self.encoder = Encoder(
+            [
+                EncoderLayer(
+                    AttentionLayer(
+                        ProbAttention(False, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    d_model,
+                    d_ff,
+                    dropout=dropout,
+                    activation=activation
+                ) for _ in range(e_layers)
+            ],
+            [
+                ConvLayer(
+                    d_model
+                ) for _ in range(e_layers - 1)
+            ],
+            norm_layer=nn.LayerNorm(d_model)
+        )
         # Decoder
-        self.projection = nn.Linear(d_model, c_out, bias=True)
-        self.self_attn = AttentionLayer(FullAttention(True, factor, attention_dropout=dropout), d_model, n_heads)
-        self.cross_attn = AttentionLayer(FullAttention(False, factor, attention_dropout=dropout), d_model, n_heads)
-        self.decoder_layer = DecoderLayer(self.self_attn, self.cross_attn, d_model, d_ff, dropout, activation)
-
-        self.decoder = Decoder(self.decoder_layer, self.norm_layer, self.projection, num_layers=d_layers)
+        self.decoder = Decoder(
+            [
+                DecoderLayer(
+                    AttentionLayer(
+                        ProbAttention(True, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    AttentionLayer(
+                        FullAttention(False, factor, attention_dropout=dropout),
+                        d_model, n_heads),
+                    d_model,
+                    d_ff,
+                    dropout=dropout,
+                    activation=activation,
+                )
+                for _ in range(d_layers)
+            ],
+            norm_layer=nn.LayerNorm(d_model),
+            projection=nn.Linear(d_model, c_out, bias=True)
+        )
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
