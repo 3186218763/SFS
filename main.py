@@ -107,14 +107,8 @@ def main(cfg: DictConfig):
     all_predicted_values = []
     all_times = []
 
-    # 设置测试的批次数量
-    num_batches_to_test = cfg.eval.test_days // cfg.model.pred_len
-
     with torch.no_grad():
-        for batch_idx, batch in enumerate(val_loader):
-            if batch_idx >= num_batches_to_test:
-                break
-
+        for batch in val_loader:
             x = batch['x'].to(device)
             x_mark = batch['x_time'].to(device)
             y_mark = batch['y_time'].to(device)
@@ -143,17 +137,13 @@ def main(cfg: DictConfig):
     years = all_times[:, 0] + 2010
     months = all_times[:, 1]
     days = all_times[:, 2]
-    dates = pd.to_datetime({'year': years, 'month': months, 'day': days}
-    # 绘制预测和真实值的对比图
-    plt.figure(figsize=(12, 6))
-    plt.plot(all_true_values, label='True')
-    plt.plot(all_predicted_values, label='Predicted')
-    plt.xlabel('Time')
-    plt.ylabel('Value')
-    plt.legend()
-    plt.title(f'{cfg.model.name}: True vs. Predicted')
-    plt.savefig(os.path.join(run_dir, f'{cfg.model.name}.png'))
-    plt.close()
+    dates = pd.to_datetime({'year': years, 'month': months, 'day': days})
+    df = pd.DataFrame({
+        'Date': dates,
+        'True Values': all_true_values,
+        'Predicted Values': all_predicted_values
+    })
+    df.to_csv(os.path.join(run_dir, 'test.csv'), index=False)
 
 
 if __name__ == "__main__":
