@@ -3,11 +3,11 @@ _target_: "train.LSTMConfig"
 name: lstm
 input_size: 7
 label_len: 0
-seq_len: 100
-pred_len: 5
-hidden_size: 256
-num_layers: 2
+seq_len: 720
+pred_len: 360
+hidden_size: 64
+num_layers: 4
 dropout: 0.2
-d_model: 512
+d_model: 64
 
 

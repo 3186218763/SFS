@@ -10,6 +10,7 @@ from nets.informer import Informer
 from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
 from nets.reformer import Reformer
 from nets.tcn import TCN_LSTM
+from nets.manba import Manba
 
 
 def gen_model(cfg: DictConfig) -> nn.Module:
@@ -109,6 +110,15 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             dropout=cfg.model.dropout,
             pred_len=cfg.model.pred_len,
             kernel_size=cfg.model.kernel_size,
+        )
+    elif name == 'manba':
+        model = Manba(
+            seq_len=cfg.model.seq_len,
+            output_size=cfg.model.pred_len,
+            input_size=cfg.model.input_size,
+            num_layers=cfg.model.num_layers,
+            state_size=cfg.model.state_size,
+            device='cuda'
         )
     else:
         raise ValueError(f'还没有提供这个模型: {name}')

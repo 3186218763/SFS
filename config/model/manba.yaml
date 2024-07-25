@@ -1,0 +1,10 @@
+# config/model/manba.yaml
+_target_: "train.ManbaConfig"
+name: manba
+input_size: 7
+label_len: 0
+seq_len: 720
+pred_len: 360
+num_layers: 4
+dropout: 0.2
+state_size: 512

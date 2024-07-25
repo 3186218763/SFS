@@ -13,9 +13,9 @@ d_ff: 2048
 dropout: 0.1
 activation: "gelu"
 e_layers: 3
-d_layers: 2
-moving_avg: 15
+d_layers: 1
+moving_avg: 125
 c_out: 1
 enc_in: 7
-factor: 5
+factor: 1
 

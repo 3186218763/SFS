@@ -1,8 +1,10 @@
 version_base: 1.3
 
+
+# 选择模型, manba目前有bug
 defaults:
   - _self_
-  - model: informer
+  - model: manba
 
 data:
   csv_file: "./data/更张.csv"
@@ -12,7 +14,7 @@ data:
   num_workers: 4
 
 train:
-  is_train: False
+  is_train: True
   epochs: 200        # 训练轮数
   learning_rate: 1e-3
   step_size: 20       # 学习率调度的步长
@@ -20,7 +22,7 @@ train:
   draw_loss: 10   # 保存模型的轮数间隔
 
 path:
-  load_dir: './outputs/2024-07-25/15-32-21/best_model.pth'
+  load_dir:
 
 eval:
   not_roll: True
