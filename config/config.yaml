@@ -5,10 +5,10 @@ defaults:
   - model: autoformer
 
 data:
-  csv_file: "./data/工布江达.csv"
-  batch_size: 32
+  csv_file: "./data/更张.csv"
+  batch_size: 16
   train_split: 0.99
-  shuffle: True
+  shuffle: False
   num_workers: 4
 
 train:

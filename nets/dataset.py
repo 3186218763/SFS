@@ -127,7 +127,7 @@ if __name__ == '__main__':
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
     # 打印一些数据检查
-    for batch in dataloader:
+    for idx, batch in enumerate(dataloader):
         x = batch['x'].to(device)
         x_mark = batch['x_time'].to(device)
         y_mark = batch['y_time'].to(device)
@@ -140,4 +140,5 @@ if __name__ == '__main__':
         out = model(x, x_mark, dec_inp, y_mark)
         y_mark = y_mark
         print(y_mark)
-        break
+        if idx == 2:
+            break
