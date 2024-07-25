@@ -14,6 +14,7 @@ from torch.utils.data import DataLoader, Subset
 
 from nets.dataset import TimeSeriesDataset
 from utools.train_tools import setup_logging, gen_model, draw_loss_curve
+from utools.metrics import metric
 
 
 @hydra.main(version_base=None, config_path="config", config_name="config")
@@ -163,6 +164,13 @@ def main(cfg: DictConfig):
     plt.grid()
     plt.tight_layout()  # 自动调整布局
     plt.savefig(os.path.join(run_dir, "results.png"))
+    # 计算metric保存
+    mae, mse, rmse, mape, mspe, nse = metric(all_predicted_values, all_true_values)
+    metrics_df = pd.DataFrame({
+        'Metric': ['MAE', 'MSE', 'RMSE', 'MAPE', 'MSPE', 'NSE'],
+        'Value': [mae, mse, rmse, mape, mspe, nse]
+    })
+    metrics_df.to_csv(os.path.join(run_dir, "metrics.csv"), index=False)
 
 
 if __name__ == "__main__":

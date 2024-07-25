@@ -31,11 +31,31 @@ def MSPE(pred, true):
     return np.mean(np.square((pred - true) / true))
 
 
+def NSE(pred, true):
+    """
+    计算纳什效率系数NSE
+
+    """
+
+    true_mean = np.mean(true)
+
+    numerator = np.sum(np.power(true - pred, 2))
+    denominator = np.sum(np.power(true - true_mean, 2))
+
+    nse = 1 - numerator / denominator
+
+    return nse
+
+
 def metric(pred, true):
+    """
+
+    """
     mae = MAE(pred, true)
     mse = MSE(pred, true)
     rmse = RMSE(pred, true)
     mape = MAPE(pred, true)
     mspe = MSPE(pred, true)
+    nse = NSE(pred, true)
 
-    return mae, mse, rmse, mape, mspe
+    return mae, mse, rmse, mape, mspe, nse
