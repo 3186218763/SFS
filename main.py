@@ -1,6 +1,7 @@
 import logging
 import os
 
+import pandas as pd
 import hydra
 import matplotlib.pyplot as plt
 import numpy as np
@@ -104,9 +105,10 @@ def main(cfg: DictConfig):
     model.eval()
     all_true_values = []
     all_predicted_values = []
+    all_times = []
 
     # 设置测试的批次数量
-    num_batches_to_test = 500 // cfg.model.pred_len
+    num_batches_to_test = cfg.eval.test_days // cfg.model.pred_len
 
     with torch.no_grad():
         for batch_idx, batch in enumerate(val_loader):
@@ -125,15 +127,23 @@ def main(cfg: DictConfig):
             # 反归一化数据
             outputs = dataset.inverse_transform(outputs.cpu().numpy())
             y = dataset.inverse_transform(y.cpu().numpy())
+            y_mark = y_mark.cpu().numpy()[0]
 
             # 将所有批次的数据连接起来
+            all_times.append(y_mark)
+
             all_true_values.append(y.flatten())
             all_predicted_values.append(outputs.flatten())
 
     # 将所有批次的数据转换为一维数组
     all_true_values = np.concatenate(all_true_values)
     all_predicted_values = np.concatenate(all_predicted_values)
-
+    all_times = np.concatenate(all_times, axis=0)
+    # 从数组中提取年份、月份和日期
+    years = all_times[:, 0] + 2010
+    months = all_times[:, 1]
+    days = all_times[:, 2]
+    dates = pd.to_datetime({'year': years, 'month': months, 'day': days}
     # 绘制预测和真实值的对比图
     plt.figure(figsize=(12, 6))
     plt.plot(all_true_values, label='True')

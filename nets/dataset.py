@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     seq_len = 230
     pred_len = 100
-    batch_size = 16
+    batch_size = 1
     label_len = 50
     csv_file = '../data/更张.csv'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -138,6 +138,6 @@ if __name__ == '__main__':
         dec_inp = torch.cat([y[:, :label_len], zeros], dim=1).float().to(device)
 
         out = model(x, x_mark, dec_inp, y_mark)
-        print(out.shape)
-
+        y_mark = y_mark
+        print(y_mark)
         break

@@ -2,7 +2,7 @@ version_base: 1.3
 
 defaults:
   - _self_
-  - model: informer
+  - model: autoformer
 
 data:
   csv_file: "./data/巴河桥.csv"
@@ -21,6 +21,9 @@ train:
 
 path:
   load_dir:
+
+eval:
+  test_days: 500
 
 
 
