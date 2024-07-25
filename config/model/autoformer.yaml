@@ -5,16 +5,16 @@ name: 'autoformer'
 # label_len 必须小于pred_len
 # 注意autoformer非常适合长序列预测
 seq_len: 360
-pred_len: 200
-label_len: 100
+pred_len: 10
+label_len: 5
 d_model: 512
 n_heads: 8
 d_ff: 2048
 dropout: 0.1
 activation: "gelu"
-e_layers: 4
+e_layers: 3
 d_layers: 2
-moving_avg: 25
+moving_avg: 15
 c_out: 1
 enc_in: 7
 factor: 5

@@ -95,7 +95,7 @@ def main(cfg: DictConfig):
             scheduler.step()
 
             # 每10个epoch绘制一次损失曲线
-            if (epoch + 1) % 10 == 0:
+            if (epoch + 1) % cfg.train.draw_loss == 0:
                 draw_loss_curve(train_losses, run_dir)
 
         logger.info("训练完成。")
@@ -128,22 +128,41 @@ def main(cfg: DictConfig):
 
             all_true_values.append(y.flatten())
             all_predicted_values.append(outputs.flatten())
+            if cfg.eval.not_roll:
+                break
 
     # 将所有批次的数据转换为一维数组
     all_true_values = np.concatenate(all_true_values)
     all_predicted_values = np.concatenate(all_predicted_values)
     all_times = np.concatenate(all_times, axis=0)
+    year = 2010 + all_times[:, 0]  # 第 1 列 + 2010
+    month = all_times[:, 1]  # 第 2 列
+    day = all_times[:, 2]  # 第 3 列
+
+    # 创建日期
+    dates = []
+    for y, m, d in zip(year, month, day):
+        date = pd.to_datetime(f'{int(y)}-{int(m)}-{int(d)}')
+        dates.append(date)
     # 从数组中提取年份、月份和日期
-    years = all_times[:, 0] + 2010
-    months = all_times[:, 1]
-    days = all_times[:, 2]
-    dates = pd.to_datetime({'year': years, 'month': months, 'day': days})
     df = pd.DataFrame({
         'Date': dates,
         'True Values': all_true_values,
         'Predicted Values': all_predicted_values
     })
-    df.to_csv(os.path.join(run_dir, 'test.csv'), index=False)
+
+    df.to_csv(os.path.join(run_dir, "results.csv"), index=False)
+    plt.figure(figsize=(10, 5))
+    plt.plot(df['Date'], df['True Values'], label='True Values', marker='o')
+    plt.plot(df['Date'], df['Predicted Values'], label='Predicted Values', marker='x')
+    plt.title('True Values vs Predicted Values')
+    plt.xlabel('Date')
+    plt.ylabel('Values')
+    plt.legend()
+    plt.xticks(rotation=45)  # 旋转日期标签
+    plt.grid()
+    plt.tight_layout()  # 自动调整布局
+    plt.savefig(os.path.join(run_dir, "results.png"))
 
 
 if __name__ == "__main__":

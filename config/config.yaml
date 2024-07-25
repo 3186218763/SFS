@@ -5,25 +5,25 @@ defaults:
   - model: autoformer
 
 data:
-  csv_file: "./data/巴河桥.csv"
-  batch_size: 16
-  train_split: 0.9
+  csv_file: "./data/工布江达.csv"
+  batch_size: 32
+  train_split: 0.99
   shuffle: True
   num_workers: 4
 
 train:
   is_train: True
-  epochs: 500        # 训练轮数
+  epochs: 200        # 训练轮数
   learning_rate: 1e-3
-  step_size: 30       # 学习率调度的步长
+  step_size: 20       # 学习率调度的步长
   gamma: 0.5          # 学习率衰减因子
-  save_interval: 10   # 保存模型的轮数间隔
+  draw_loss: 10   # 保存模型的轮数间隔
 
 path:
   load_dir:
 
 eval:
-  test_days: 500
+  not_roll: True
 
 
 
