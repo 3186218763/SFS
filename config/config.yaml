@@ -4,7 +4,7 @@ version_base: 1.3
 # 选择模型, manba目前有bug
 defaults:
   - _self_
-  - model: manba
+  - model: gru
 
 data:
   csv_file: "./data/更张.csv"

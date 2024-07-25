@@ -3,8 +3,8 @@ _target_: "train.BiLSTMConfig"
 name: bilstm
 input_size: 7
 label_len: 0
-seq_len: 720
-pred_len: 360
+seq_len: 360
+pred_len: 10
 hidden_size: 64
 num_layers: 4
 dropout: 0.2

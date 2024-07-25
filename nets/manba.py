@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from einops import rearrange
+from layers.Embed import PositionalEmbedding
 
 torch.backends.cudnn.benchmark = True
 torch.backends.cudnn.deterministic = True
@@ -178,7 +179,7 @@ class Manba(nn.Module):
             nn.Linear(input_size // 2, output_size, device=device),
         )
 
-    def forward(self, x, x_mark_enc, x_dec, x_mark_dec):
+    def forward(self, x, x_mark_enc=None, x_dec=None, x_mark_dec=None):
         for layer in self.layers:
             x = layer(x)
         x = x[:, -1, :]
@@ -197,19 +198,4 @@ class RMSNorm(nn.Module):
         return output
 
 
-if __name__ == '__main__':
-    seq_len = 150
-    output_size = 2
-    input_size = 7
-    state_size = 512  # 状态机大小
-    num_layers = 4
-    device = 'cuda'
-    model = Manba(seq_len=seq_len,
-                  output_size=output_size,
-                  input_size=input_size,
-                  num_layers=num_layers,
-                  state_size=state_size,
-                  device=device)
-    tensor = torch.randn(batch_size, seq_len, 7, device=device)
-    output = model(tensor)
-    print(output.shape)
+
