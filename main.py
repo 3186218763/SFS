@@ -156,7 +156,7 @@ def main(cfg: DictConfig):
     plt.figure(figsize=(10, 5))
     plt.plot(df['Date'], df['True Values'], label='True Values', marker='o')
     plt.plot(df['Date'], df['Predicted Values'], label='Predicted Values', marker='x')
-    plt.title(f'{cfg.model.name} True Vs Pred')
+    plt.title(f'{cfg.model.name} - {cfg.model.seq_len} to {cfg.model.pred_len}')
     plt.xlabel('Date')
     plt.ylabel('Values')
     plt.legend()

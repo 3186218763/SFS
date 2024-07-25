@@ -2,17 +2,17 @@ version_base: 1.3
 
 defaults:
   - _self_
-  - model: autoformer
+  - model: informer
 
 data:
   csv_file: "./data/更张.csv"
   batch_size: 16
   train_split: 0.99
-  shuffle: False
+  shuffle: True
   num_workers: 4
 
 train:
-  is_train: True
+  is_train: False
   epochs: 200        # 训练轮数
   learning_rate: 1e-3
   step_size: 20       # 学习率调度的步长
@@ -20,7 +20,7 @@ train:
   draw_loss: 10   # 保存模型的轮数间隔
 
 path:
-  load_dir:
+  load_dir: './outputs/2024-07-25/15-32-21/best_model.pth'
 
 eval:
   not_roll: True
