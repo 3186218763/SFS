@@ -91,38 +91,38 @@ if __name__ == '__main__':
     #     c_out=1,
     #     activation='gelu'
     # ).to(device)
-    # model = Autoformer(
-    #     seq_len=seq_len,
-    #     label_len=label_len,  # seq-pre
-    #     pred_len=pred_len,
-    #     moving_avg=25,
-    #     enc_in=7,
-    #     d_model=512,  # 根据需要调整
-    #     dropout=0.05,  # 根据需要调整
-    #     n_heads=8,
-    #     d_ff=2048,  # 根据需要调整
-    #     e_layers=2,
-    #     d_layers=1,
-    #     activation='gelu',
-    #     c_out=1,
-    #     factor=1.0
-    # ).to(device)
-    # 创建数据集和数据加载器
-    model = Reformer(
-        enc_in=7,
-        d_model=512,
-        dropout=0.1,
-        e_layers=2,
-        n_heads=8,
-        bucket_size=8,
-        n_hashes=4,
-        d_ff=2048,
-        c_out=1,
-        activation='gelu',
-        pred_len=pred_len,
+    model = Autoformer(
         seq_len=seq_len,
-        label_len=label_len
+        label_len=label_len,  # seq-pre
+        pred_len=pred_len,
+        moving_avg=25,
+        enc_in=7,
+        d_model=512,  # 根据需要调整
+        dropout=0.05,  # 根据需要调整
+        n_heads=8,
+        d_ff=2048,  # 根据需要调整
+        e_layers=2,
+        d_layers=1,
+        activation='gelu',
+        c_out=1,
+        factor=1.0
     ).to(device)
+    # 创建数据集和数据加载器
+    # model = Reformer(
+    #     enc_in=7,
+    #     d_model=512,
+    #     dropout=0.1,
+    #     e_layers=2,
+    #     n_heads=8,
+    #     bucket_size=8,
+    #     n_hashes=4,
+    #     d_ff=2048,
+    #     c_out=1,
+    #     activation='gelu',
+    #     pred_len=pred_len,
+    #     seq_len=seq_len,
+    #     label_len=label_len
+    # ).to(device)
     dataset = TimeSeriesDataset(csv_file, seq_len, pred_len)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 

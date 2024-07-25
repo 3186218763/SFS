@@ -83,12 +83,12 @@ def main(cfg: DictConfig):
             avg_loss = total_loss / len(train_loader)
             train_losses.append(avg_loss)
             current_lr = optimizer.param_groups[0]['lr']
-            logger.info(f"Epoch {epoch + 1}/{cfg.train.epochs}, Loss: {avg_loss:.4f}, LR: {current_lr:.8f}")
+            logger.info(f"Epoch {epoch + 1}/{cfg.train.epochs}, Loss: {avg_loss:.5f}, LR: {current_lr:.8f}")
 
             # 保存损失更小的模型参数
             if avg_loss < best_loss:
                 best_loss = avg_loss
-                logger.info(f"最小Loss是：{best_loss:.4f}")
+                logger.info(f"最小Loss是：{best_loss:.5f}")
                 torch.save(model.state_dict(), os.path.join(run_dir, 'best_model.pth'))
 
             scheduler.step()
