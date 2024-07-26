@@ -61,7 +61,7 @@ class TemporalEmbedding(nn.Module):
 
 class DataEmbedding(nn.Module):
     def __init__(self, c_in, d_model, dropout=0.1):
-        super(DataEmbedding, self).__init__()
+        super().__init__()
 
         self.value_embedding = TokenEmbedding(c_in=c_in, d_model=d_model)
         self.position_embedding = PositionalEmbedding(d_model=d_model)

@@ -8,4 +8,4 @@ input_size: 7
 lstm_hidden_size: 64
 lstm_num_layers: 4
 kernel_size: 7
-dropout: 0.2
+dropout: 0.1

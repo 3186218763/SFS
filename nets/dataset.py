@@ -139,6 +139,6 @@ if __name__ == '__main__':
 
         out = model(x, x_mark, dec_inp, y_mark)
         y_mark = y_mark
-        print(y_mark)
+        print(x.shape, x_mark.shape)
         if idx == 2:
             break
