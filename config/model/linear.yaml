@@ -1,0 +1,7 @@
+_target_: "train.LinearConfig"
+name: 'linear'
+c_in: 7
+label_len: 0
+seq_len: 100
+pred_len: 5
+d_model: 32
