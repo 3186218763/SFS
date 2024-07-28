@@ -35,7 +35,7 @@ class Informer(nn.Module):
         self.cross_attn = AttentionLayer(FullAttention(False, factor, attention_dropout=dropout), d_model, n_heads)
         self.decoder_layer = DecoderLayer(self.self_attn, self.cross_attn, d_model, d_ff, dropout, activation)
 
-        self.decoder = Decoder(self.decoder_layer, self.norm_layer, self.projection, num_layers=d_layers)
+        self.decoder = Decoder(self.decoder_layer, self.norm_layer, self.projection, d_layers)
 
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec,
                 enc_self_mask=None, dec_self_mask=None, dec_enc_mask=None):
