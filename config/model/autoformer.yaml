@@ -12,7 +12,7 @@ n_heads: 8
 d_ff: 2048
 dropout: 0.1
 activation: "gelu"
-e_layers: 3
+e_layers: 2
 d_layers: 1
 moving_avg: 125
 c_out: 1

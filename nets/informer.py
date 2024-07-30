@@ -3,6 +3,7 @@ import torch.nn as nn
 from layers.Embed import DataEmbedding
 from layers.SelfAttention_Family import ProbAttention, AttentionLayer, FullAttention
 from layers.Transformer_EncDec import Decoder, DecoderLayer, Encoder, EncoderLayer, ConvLayer
+from layers.Kan import KANLinear
 
 
 class Informer(nn.Module):
@@ -30,7 +31,7 @@ class Informer(nn.Module):
         self.encoder = Encoder(self.encoder_layer, self.conv_layer, self.norm_layer, e_layers)
 
         # Decoder
-        self.projection = nn.Linear(d_model, c_out, bias=True)
+        self.projection = KANLinear(d_model, c_out)
         self.self_attn = AttentionLayer(FullAttention(True, factor, attention_dropout=dropout), d_model, n_heads)
         self.cross_attn = AttentionLayer(FullAttention(False, factor, attention_dropout=dropout), d_model, n_heads)
         self.decoder_layer = DecoderLayer(self.self_attn, self.cross_attn, d_model, d_ff, dropout, activation)

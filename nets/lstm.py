@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
+from layers.Embed import DataEmbedding
 
 
 class LSTM(nn.Module):
     def __init__(self, input_size, d_model, hidden_size, pred_len, num_layers, dropout):
         super().__init__()
-        self.data_embedding = nn.Linear(input_size, d_model)
+        self.data_embedding = DataEmbedding(input_size, d_model)
         self.lstm = nn.LSTM(d_model, hidden_size, num_layers, batch_first=True, dropout=dropout)
         self.fc = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 4),
@@ -15,7 +16,7 @@ class LSTM(nn.Module):
         )
 
     def forward(self, x_enc, x_mark_enc=None, x_dec=None, x_mark_dec=None):
-        x = self.data_embedding(x_enc)
+        x = self.data_embedding(x_enc, x_mark_enc)
         x, _ = self.lstm(x)
         x = x[:, -1, :]
         out = self.fc(x)

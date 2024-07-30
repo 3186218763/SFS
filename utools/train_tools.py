@@ -11,7 +11,7 @@ from nets.lstm import LSTM, GRU, BiLSTM, BiGRU
 from nets.reformer import Reformer
 from nets.tcn import TCN_LSTM
 from nets.manba import Manba
-from nets.kan import Kan, Linear
+from nets.kan import Kan, Linear, DLinear
 
 
 def gen_model(cfg: DictConfig) -> nn.Module:
@@ -132,6 +132,12 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             c_in=cfg.model.c_in,
             d_model=cfg.model.d_model,
             pred_len=cfg.model.pred_len,
+        )
+    elif name == 'dlinear':
+        model = DLinear(
+            seq_len=cfg.model.seq_len,
+            pred_len=cfg.model.pred_len,
+            enc_in=cfg.model.enc_in,
         )
     else:
         raise ValueError(f'还没有提供这个模型: {name}')

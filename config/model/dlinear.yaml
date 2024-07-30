@@ -1,0 +1,6 @@
+_target_: "train.DLinearConfig"
+name: 'dlinear'
+seq_len: 100
+pred_len: 5
+enc_in: 7
+label_len: 0
