@@ -138,6 +138,7 @@ def gen_model(cfg: DictConfig) -> nn.Module:
             seq_len=cfg.model.seq_len,
             pred_len=cfg.model.pred_len,
             enc_in=cfg.model.enc_in,
+            d_model=cfg.model.d_model
         )
     else:
         raise ValueError(f'还没有提供这个模型: {name}')

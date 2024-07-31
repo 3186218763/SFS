@@ -1,6 +1,6 @@
 import torch.nn as nn
 import torch
-from layers.Embed import DataEmbedding
+from layers.Embed import DataEmbedding_wo_pos, DataEmbedding
 from layers.Kan import KANLinear
 from layers.AutoCorrelation import MultiHeadCompression
 
@@ -86,13 +86,15 @@ class series_decomp(nn.Module):
 
 
 class DLinear(nn.Module):
-    def __init__(self, seq_len, pred_len, enc_in, individual=True):
+    def __init__(self, seq_len, pred_len, enc_in, d_model, individual=True):
         super().__init__()
         self.seq_len = seq_len
         self.pred_len = pred_len
         self.individual = individual
-        self.channels = enc_in
+        self.channels = 4
+
         kernel_size = 25
+        self.embed = DataEmbedding_wo_pos(c_in=enc_in, d_model=d_model)
         self.decomposition = series_decomp(kernel_size)
 
         if self.individual:
@@ -103,9 +105,10 @@ class DLinear(nn.Module):
             self.Linear_Seasonal = KANLinear(self.seq_len, self.pred_len)
             self.Linear_Trend = KANLinear(self.seq_len, self.pred_len)
             self.Linear_Decoder = KANLinear(self.seq_len, self.pred_len)
-        self.multiHeadCompression = MultiHeadCompression(self.channels)
+        self.multiHeadCompression = MultiHeadCompression(d_model)
 
     def forward(self, x, x_mark_enc=None, x_dec=None, x_mark_dec=None):
+        x = self.embed(x, x_mark_enc)
         seasonal_init, trend_init = self.decomposition(x)
         seasonal_init, trend_init = seasonal_init.permute(0, 2, 1), trend_init.permute(0, 2, 1)
         if self.individual:

@@ -4,7 +4,7 @@ version_base: 1.3
 # 选择模型, manba目前有bug
 defaults:
   - _self_
-  - model: informer
+  - model: dlinear
 
 data:
   csv_file: "./data/更张.csv"
@@ -16,13 +16,13 @@ data:
 train:
   is_train: True
   epochs: 120        # 训练轮数
-  learning_rate: 1e-3
+  learning_rate: 5e-4
   step_size: 15       # 学习率调度的步长
   gamma: 0.5          # 学习率衰减因子
   draw_loss: 10   # 保存模型的轮数间隔
 
 path:
-  load_dir:
+  load_dir: "./outputs/2024-07-31/15-05-36/best_model.pth"
 
 eval:
   not_roll: True
