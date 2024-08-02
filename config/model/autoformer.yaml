@@ -7,15 +7,15 @@ name: 'autoformer'
 seq_len: 720
 pred_len: 360
 label_len: 180
-d_model: 32
+d_model: 512
 n_heads: 8
-d_ff: 512
-dropout: 0.2
+d_ff: 1024
+dropout: 0.1
 activation: "gelu"
-e_layers: 3
-d_layers: 2
-moving_avg: 175
+e_layers: 4
+d_layers: 1
+moving_avg: 25
 c_out: 1
 enc_in: 7
-factor: 1
+factor: 5
 

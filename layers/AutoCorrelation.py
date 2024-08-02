@@ -157,7 +157,7 @@ class AutoCorrelationLayer(nn.Module):
 
 
 class MultiHeadCompression(nn.Module):
-    def __init__(self, dim, num_heads=4):
+    def __init__(self, dim, num_heads=16):
         super().__init__()
         self.heads = nn.ModuleList([nn.Linear(dim, 1) for _ in range(num_heads)])
 
