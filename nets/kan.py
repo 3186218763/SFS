@@ -100,11 +100,9 @@ class DLinear(nn.Module):
         if self.individual:
             self.Linear_Seasonal = nn.ModuleList([KANLinear(self.seq_len, self.pred_len) for _ in range(self.channels)])
             self.Linear_Trend = nn.ModuleList([KANLinear(self.seq_len, self.pred_len) for _ in range(self.channels)])
-            self.Linear_Decoder = nn.ModuleList([KANLinear(self.seq_len, self.pred_len) for _ in range(self.channels)])
         else:
             self.Linear_Seasonal = KANLinear(self.seq_len, self.pred_len)
             self.Linear_Trend = KANLinear(self.seq_len, self.pred_len)
-            self.Linear_Decoder = KANLinear(self.seq_len, self.pred_len)
         self.multiHeadCompression = MultiHeadCompression(d_model)
 
     def forward(self, x, x_mark_enc=None, x_dec=None, x_mark_dec=None):

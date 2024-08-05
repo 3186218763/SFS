@@ -7,7 +7,7 @@ defaults:
   - model: autoformer
 
 data:
-  csv_file: "./data/更张.csv"
+  csv_file: "./data/巴河桥.csv"
   batch_size: 16
   train_split: 0.99
   shuffle: True
@@ -15,7 +15,7 @@ data:
 
 train:
   is_train: True
-  epochs: 120        # 训练轮数
+  epochs: 100        # 训练轮数
   learning_rate: 1e-3
   step_size: 15       # 学习率调度的步长
   gamma: 0.5          # 学习率衰减因子

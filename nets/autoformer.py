@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from layers.Embed import DataEmbedding_wo_pos
+from layers.Embed import DataEmbedding_wo_pos, DataEmbedding
 from layers.AutoCorrelation import AutoCorrelation, AutoCorrelationLayer, MultiHeadCompression
 from layers.Autoformer_EncDec import Encoder, Decoder, EncoderLayer, DecoderLayer, Seasonal_Layernorm, series_decomp
 from layers.Transformer_EncDec import ConvLayer
@@ -25,8 +25,8 @@ class Autoformer(nn.Module):
         self.decomp = series_decomp(kernel_size)
 
         # Embedding
-        self.enc_embedding = DataEmbedding_wo_pos(enc_in, d_model)
-        self.dec_embedding = DataEmbedding_wo_pos(enc_in, d_model)
+        self.enc_embedding = DataEmbedding(enc_in, d_model)
+        self.dec_embedding = DataEmbedding(enc_in, d_model)
 
         # Encoder
         self.attn = AutoCorrelationLayer(AutoCorrelation(factor, attention_dropout=dropout), d_model, n_heads)

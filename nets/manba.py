@@ -198,4 +198,5 @@ class RMSNorm(nn.Module):
         return output
 
 
-
+if __name__ == '__main__':
+    tensor = torch.randn((100, 50))

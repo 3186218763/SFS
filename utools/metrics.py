@@ -24,11 +24,14 @@ def RMSE(pred, true):
 
 
 def MAPE(pred, true):
-    return np.mean(np.abs((pred - true) / true))
-
+    epsilon = 1e-10  # 定义一个非常小的数值
+    true_safe = np.where(true == 0, epsilon, true)  # 将 true 中的零值替换为 epsilon
+    return np.mean(np.abs((pred - true) / true_safe))
 
 def MSPE(pred, true):
-    return np.mean(np.square((pred - true) / true))
+    epsilon = 1e-10  # 定义一个非常小的数值
+    true_safe = np.where(true == 0, epsilon, true)  # 将 true 中的零值替换为 epsilon
+    return np.mean(np.square((pred - true) / true_safe))
 
 
 def NSE(pred, true):

@@ -17,5 +17,5 @@ d_layers: 1
 moving_avg: 25
 c_out: 1
 enc_in: 7
-factor: 5
+factor: 1
 
