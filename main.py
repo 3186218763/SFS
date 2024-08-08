@@ -120,17 +120,21 @@ def main(cfg: DictConfig):
             outputs = model(x, x_mark, dec_inp, y_mark)
 
             # 反归一化数据
-            outputs = dataset.inverse_transform(outputs.cpu().numpy())
-            y = dataset.inverse_transform(y.cpu().numpy())
+            outputs = dataset.inverse_transform(outputs.cpu().numpy()).flatten()
+            y = dataset.inverse_transform(y.cpu().numpy()).flatten()
             y_mark = y_mark.cpu().numpy()[0]
 
-            # 将所有批次的数据连接起来
-            all_times.append(y_mark)
-
-            all_true_values.append(y.flatten())
-            all_predicted_values.append(outputs.flatten())
             if cfg.eval.not_roll:
+                # 将所有批次的数据连接起来
+                all_times.append(y_mark)
+                all_true_values.append(y)
+                all_predicted_values.append(outputs)
                 break
+            else:
+
+                all_true_values.append(y[:1])
+                all_predicted_values.append(outputs[:1])
+                all_times.append(y_mark[:1])
 
     # 将所有批次的数据转换为一维数组
     all_true_values = np.concatenate(all_true_values)

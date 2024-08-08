@@ -7,9 +7,9 @@ defaults:
   - model: autoformer
 
 data:
-  csv_file: "./data/巴河桥.csv"
+  csv_file: "./data/更张.csv"
   batch_size: 16
-  train_split: 0.99
+  train_split: 0.9
   shuffle: True
   num_workers: 4
 
@@ -25,7 +25,7 @@ path:
   load_dir:
 
 eval:
-  not_roll: True
+  not_roll: False
 
 
 

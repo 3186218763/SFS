@@ -1,11 +1,11 @@
 # config/model/tcn_lstm.yaml
 _target_: "train.TCN_LSTMConfig"
 name: tcn_lstm
-seq_len: 360
-pred_len: 10
+seq_len: 720
+pred_len: 360
 label_len: 0
 input_size: 7
 lstm_hidden_size: 64
-lstm_num_layers: 4
+lstm_num_layers: 2
 kernel_size: 7
 dropout: 0.1

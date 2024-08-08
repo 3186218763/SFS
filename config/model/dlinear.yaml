@@ -3,5 +3,5 @@ name: 'dlinear'
 seq_len: 720
 pred_len: 360
 enc_in: 7
-d_model: 512
+d_model: 32
 label_len: 0
